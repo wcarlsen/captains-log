@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+black = "*"
+
+[packages]
+prometheus-client = "*"
+kubernetes = "*"
+structlog = "*"
+
+[scripts]
+start = "python service.py"
+
+[pipenv]
+allow_prereleases = true
+
+[requires]
+python_version = "3.8"
