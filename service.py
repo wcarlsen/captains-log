@@ -1,56 +1,35 @@
-from sys import stdout
 from os import getenv
-from datetime import datetime, timezone
-from prometheus_client import start_http_server, Counter
-from kubernetes import client, config, watch
 import structlog
-
-# Logging
-def timestamper(_, __, event_dict):
-    event_dict["timestamp"] = datetime.now(timezone.utc).isoformat()
-    return event_dict
-
+from prometheus_client import start_http_server
+from src.kubernetes.event_steam import EventStream
+from src.kubernetes.event import Event
+from src.prometheus.event_counter import counter
 
 structlog.configure(
     processors=[
-        timestamper,
         structlog.stdlib.add_log_level,
+        structlog.processors.TimeStamper(),
         structlog.processors.JSONRenderer(),
     ]
 )
-logger = structlog.get_logger()
 
-# Kubernetes
-config.load_kube_config(config_file="~/.kube/config_hellman")
-v1 = client.CoreV1Api()
-w = watch.Watch()
+log = structlog.get_logger()
 
-# Prometheus
-PORT = int(getenv("PORT", "8080"))
+PORT = getenv("PORT", "8080")
 
-c = Counter(
-    "deployments_total", "Total number of deployments", ["reason", "namespace", "name"]
-)
-
-
-# Service
 if __name__ == "__main__":
-    logger.info(f"Start service at port={PORT}")
+    log.info(f"Star serving metrics on port {PORT}")
+    start_http_server(int(PORT))
 
-    # Start up the server to expose the metrics.
-    start_http_server(port=PORT)
+    while True:
+        es: EventStream = EventStream()
 
-    logger.info("Consuming events")
-    for event in w.stream(v1.list_event_for_all_namespaces):
-        logger.info(f"Event recieved of type {event['object'].reason}", creationtime=event["object"].metadata.creation_timestamp)
+        for stream_event in es.start():
+            event: Event = Event(stream_event)
 
-        # Probably old event and or unrelated
-        if (
-            datetime.now(timezone.utc) - event["object"].metadata.creation_timestamp
-        ).seconds < 10:
-            logger.info("Incrementing counter metric")
-            c.labels(
-                event["object"].reason,
-                event["object"].metadata.namespace,
-                event["object"].metadata.name,
-            ).inc()
+            if event.is_old_event():
+                continue
+
+            log.info(f"Increasing counter for {event.kind} {event.reason} in {event.namespace} {event.name}")
+            counter.labels(event.kind, event.reason, event.namespace, event.name).inc()
+
