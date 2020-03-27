@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: captains-log
+  namespace: default
+  labels:
+    app: captains-log
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: captains-log
+  template:
+    metadata:
+      labels:
+        app: captains-log
+    spec:
+      containers:
+      - name: captains-log
+        image: wcarlsen/captains-log:1.0
+        ports:
+        - name: web
+          containerPort: 8080

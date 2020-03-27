@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: captains-log
+  namespace: default
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8080"
+spec:
+  type: ClusterIP
+  selector:
+    app: captains-log
+  ports:
+  - name: web
+    protocol: TCP
+    port: 8080
+    targetPort: web
