@@ -8,7 +8,7 @@ RUN pip install --no-cache-dir pipenv \
     && pipenv install --system --deploy --clear \
     && pip uninstall pipenv -y
 
-COPY src/ .
+COPY src/ ./src
 COPY service.py .
 
 ENTRYPOINT ["python", "service.py"]

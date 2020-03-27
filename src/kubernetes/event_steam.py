@@ -32,5 +32,3 @@ class EventStream(object):
         return self.__watcher.stream(
             self.__core_v1_api.list_event_for_all_namespaces
         )
-
-
