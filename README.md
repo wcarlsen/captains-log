@@ -38,3 +38,6 @@ This project can be configured in two main ways:
 | PORT | Port for serving metrics **OPTIONAL** | 8080 |
 | OFFSET | Offset (in seconds) used to discard old events **OPTIONAL** | 5 |
 | KUBECONFIG | Absolute path for kube config file **OPTIONAL** | "$HOME/.kube/config" |
+
+## Inspirational projects
+* [opsgenie/kubernetes-event-export](https://github.com/opsgenie/kubernetes-event-exporter)
