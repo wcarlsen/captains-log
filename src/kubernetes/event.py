@@ -18,6 +18,10 @@ class Event(object):
     def is_old_event(self) -> bool:
         event_age: int = (datetime.now(timezone.utc) - self.creation_timestamp).seconds
         if event_age > OFFSET:
-            log.debug(f"Skipping old event {self.reason} of {self.kind} in {self.namespace} for {self.name}", creation_timestamp=self.creation_timestamp.isoformat() + "Z", event_age=f"{event_age} seconds")
+            log.debug(
+                f"Skipping old event {self.reason} of {self.kind} in {self.namespace} for {self.name}",  # noqa: E501
+                creation_timestamp=self.creation_timestamp.isoformat(),
+                event_age=f"{event_age} seconds",
+            )
             return True
         return False

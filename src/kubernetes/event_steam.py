@@ -29,6 +29,4 @@ class EventStream(object):
 
     def start(self) -> Generator[dict, None, None]:
         log.info("Start steaming Kubernetes events from all namespaces")
-        return self.__watcher.stream(
-            self.__core_v1_api.list_event_for_all_namespaces
-        )
+        return self.__watcher.stream(self.__core_v1_api.list_event_for_all_namespaces)
