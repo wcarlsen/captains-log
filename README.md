@@ -3,7 +3,7 @@
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/wcarlsen/captains-log)
 
 # Captain's log :wheel_of_dharma:
-A metrics exporter for Kubernetes events. In this project we assume that events older than default 5 seconds is old news and we will discard them.
+A metrics exporter for Kubernetes events. In this project we assume that events older than default 5 seconds is old news and we will discard them in order to avoid holding state.
 
 It requires a Kubernetes config file to consume events and for local development you will need Python 3.8 and pipenv installed.
 
@@ -38,3 +38,6 @@ This project can be configured in two main ways:
 | PORT | Port for serving metrics **OPTIONAL** | 8080 |
 | OFFSET | Offset (in seconds) used to discard old events **OPTIONAL** | 5 |
 | KUBECONFIG | Absolute path for kube config file **OPTIONAL** | "$HOME/.kube/config" |
+
+## Inspirational projects
+* [opsgenie/kubernetes-event-export](https://github.com/opsgenie/kubernetes-event-exporter)
